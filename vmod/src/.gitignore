@@ -1,0 +1,8 @@
+.deps/
+.libs/
+
+vcc_if.c
+vcc_if.h
+vcc_if.lo
+
+*.la
