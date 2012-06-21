@@ -37,7 +37,11 @@ fi
 
 set -ex
 
-mkdir m4
+# create directory if not exist yet
+if [ ! -d m4 ]; then
+	mkdir m4
+fi
+
 aclocal -I m4
 $LIBTOOLIZE --copy --force
 autoheader

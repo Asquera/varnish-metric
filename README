@@ -32,5 +32,11 @@ The following steps install the Metric vmod.
     make
     make install
 
+Running the *autogen.sh* script can result in an error message, stating the "required file *ltmain.sh* not found".
+It is [suggested to re-run](http://developer.wz2100.net/ticket/349) the script a second time.
+
 
 ### Usage
+
+TODO
+
