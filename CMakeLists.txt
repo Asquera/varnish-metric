@@ -7,6 +7,7 @@ endif ()
 
 message (STATUS "libs")
 message (STATUS "    metric")
+include_directories (libmetric)
 add_subdirectory (libmetric)
 
 message (STATUS "apps")
