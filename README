@@ -1,10 +1,36 @@
 Metric vmod
 ===========
 
-This vmod is used to retrieve interesting stats / metrics from varnish and send them as statsd compatible strings to an external service.
+This vmod is used to retrieve interesting stats / metrics from varnish and send them as statsd compatible output to a host.
+
+### Prerequisites
+
+Dependening on the system setup it might be necessary to install the following packages
+
+* libtool
+* libpcre
+
+For example in Ubuntu:
+
+    sudo apt-get install libpcre3-dev
+    sudo apt-get install libtool autopoint
 
 
-### Install
+### Installation
+
+Download the [varnish source](https://www.varnish-cache.org/releases). Unpack it to a folder and follow the instructions in the *INSTALL* file.
+This should build varnish from source and install it on the system.
+
+
+The following steps install the Metric vmod.
+
+    export VARNISHSRC=path/to/varnish/src
+    export VMODDIR=/usr/local/lib/varnish/vmods/ // path might differ
+    cd vmod
+    ./autogen.sh
+    ./configure
+    make
+    make install
 
 
 ### Usage
