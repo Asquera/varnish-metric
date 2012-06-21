@@ -4,4 +4,11 @@ m4/
 Makefile
 Makefile.in
 
+*.guess
+*.h.in
+*.m4
 *.o
+*.sub
+depcomp
+install-sh
+missing
