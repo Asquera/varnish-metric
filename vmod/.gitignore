@@ -4,4 +4,18 @@ m4/
 Makefile
 Makefile.in
 
+*.guess
+*.h.in
+*.m4
 *.o
+*.sub
+config.h
+config.log
+config.status
+configure
+depcomp
+install-sh
+libtool
+ltmain.sh
+missing
+stamp-h1
