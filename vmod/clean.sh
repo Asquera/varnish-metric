@@ -11,7 +11,8 @@ rm src/Makefile
 rm src/Makefile.in
 rm src/vcc_if.c
 rm src/vcc_if.h
-rm src/vcc_if.lo
+rm src/*.lo
+rm src/*.la
 
 rm -r autom4te.cache/
 rm -r m4/
