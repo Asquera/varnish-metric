@@ -37,13 +37,9 @@ fi
 
 set -ex
 
-# create directory if not exist yet
-if [ ! -d m4 ]; then
-	mkdir m4
-fi
-
 aclocal -I m4
 $LIBTOOLIZE --copy --force
 autoheader
 automake --add-missing --copy --foreign
 autoconf
+
