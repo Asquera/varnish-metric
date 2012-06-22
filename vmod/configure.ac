@@ -1,6 +1,6 @@
 AC_PREREQ(2.59)
-AC_COPYRIGHT([Copyright (c) 2011 Varnish Software AS])
-AC_INIT([libvmod-metric], [0.1])
+AC_COPYRIGHT([Copyright (c) 2011 savetheinternet@omegasdg.com])
+AC_INIT([libvmod-metric], [trunk])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_SRCDIR(src/vmod_metric.vcc)
 AM_CONFIG_HEADER(config.h)
@@ -70,3 +70,4 @@ AC_CONFIG_FILES([
 	src/Makefile
 ])
 AC_OUTPUT
+

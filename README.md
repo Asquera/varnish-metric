@@ -27,7 +27,7 @@ The following steps install the Metric vmod.
     export VARNISHSRC=path/to/varnish/src
     export VMODDIR=/usr/local/lib/varnish/vmods/ // path might differ
     cd vmod
-    ./autogen
+    sh autogen.sh
     ./configure
     make
     make install
