@@ -1,2 +1,4 @@
 Module metric
 Init init_function
+Function BOOL match(STRING, STRING)
+
