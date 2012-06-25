@@ -9,12 +9,13 @@
 #include <sys/types.h>
 #endif
 
+#include <netinet/in.h>
 #include <arpa/inet.h>
+
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <netinet/in.h>
 #include <netdb.h>
 #include <fcntl.h>
 
@@ -55,10 +56,6 @@ int socket_connect_client(const char* host, int port) {
     
     socketfd = socket(server_info->ai_family, server_info->ai_socktype, server_info->ai_protocol);
     check(socketfd > 0, "Could not open socket.");
-    
-//    int on = 1;
-//    rc = setsockopt(socketfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
-//    check(rc == 0, "Failed to set socket option.");
     
     rc = connect(socketfd, server_info->ai_addr, server_info->ai_addrlen);
     check(rc != -1, "Failed to connect to server.");
