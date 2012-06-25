@@ -1,10 +1,13 @@
 #include "socket.h"
 
+#ifdef HAVE_SYS_SOCKET_H
+#include <sys/socket.h>
+#endif
+
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <netdb.h>
@@ -40,7 +43,7 @@ int socket_connect_client(const char* hostname, int port) {
     // set up server address connection
     memset((char*) &server_address, 0, sizeof(server_address));
     server_address.sin_family = AF_INET;
-    memcpy((char*) &stats_server->h_addr, (char*) &server_address.sin_addr.s_addr, stats_server->h_length);
+    memcpy((char*) &stats_server->h_addr_list[0], (char*) &server_address.sin_addr.s_addr, stats_server->h_length);
     server_address.sin_port = htons(port);
     
     struct sockaddr* address = (struct sockaddr*)&server_address;
@@ -49,6 +52,7 @@ int socket_connect_client(const char* hostname, int port) {
         exit_with_error("Could not connect to server address");
         return -1;
     }
+    return 0;
 }
 
 /// opens a socket connection to hostname:port
@@ -86,6 +90,8 @@ int socket_connect_server(const char* hostname, int port) {
         exit_with_error("Could not get host by name");
         return -1;
     }
+    
+    return 0;
 }
 
 /// Closes the existing socket connection
