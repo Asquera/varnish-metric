@@ -7,7 +7,7 @@
 int main(int argc, char* argv[]) {
     
     const char* hostname = "localhost";
-    int port = 3001;
+    int port = 3000;
 
     int socketfd = socket_connect_client(hostname, port);
     if (socketfd < 0) {
