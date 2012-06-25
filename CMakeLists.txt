@@ -4,7 +4,7 @@ project (vmod_hello)
 include (CheckIncludeFiles)
 
 if (NOT MSVC)
-    set (CMAKE_C_FLAGS "-std=c99")
+    set (CMAKE_C_FLAGS "-std=c99 -D_POSIX_SOURCE")
     # set (CMAKE_REQUIRED_DEFINITIONS ${CMAKE_REQUIRED_DEFINITIONS} -D_GNU_SOURCE)
 endif ()
 
