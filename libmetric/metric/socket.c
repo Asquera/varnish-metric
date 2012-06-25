@@ -1,109 +1,97 @@
 #include "socket.h"
+#include "dbg.h"
 
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
 #endif
 
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
+
+#include <arpa/inet.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <sys/types.h>
 #include <netinet/in.h>
 #include <netdb.h>
 #include <fcntl.h>
-#include <errno.h>
 
-// global variables
-int stats_udp_socketfd = 0;
-struct hostent* stats_server = 0;
-struct sockaddr_in server_address;
-
-void cleanup();
-
-/// exits the application with an error message
-void exit_with_error(const char* message) {
-    perror(message);
-    cleanup();
+static void* get_socket_address(struct sockaddr* addr) {
+    if (addr->sa_family == AF_INET) {
+        return &(((struct sockaddr_in*)addr)->sin_addr);
+    }
+    return &(((struct sockaddr_in6*)addr)->sin6_addr);
 }
 
-int socket_connect_client(const char* hostname, int port) {
-    stats_udp_socketfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (stats_udp_socketfd < 0) {
-        exit_with_error("Could not open socket");
-        return -1;
-    }
+int nonblock(int socketfd) {
+    int flags = fcntl(socketfd, F_GETFL, 0);
+    check(flags >= 0, "Invalid flags in nonblock.");
     
-    stats_server = gethostbyname(hostname);
-    if (stats_server == 0) {
-        exit_with_error("Coult not get host by name!");
-        return -1;
-    }
-    
-    // set up server address connection
-    memset((char*) &server_address, 0, sizeof(server_address));
-    server_address.sin_family = AF_INET;
-    memcpy((char*) &stats_server->h_addr_list[0], (char*) &server_address.sin_addr.s_addr, stats_server->h_length);
-    server_address.sin_port = htons(port);
-    
-    struct sockaddr* address = (struct sockaddr*)&server_address;
-    int result = connect(stats_udp_socketfd, address, sizeof(server_address));
-    if (result < 0) {
-        exit_with_error("Could not connect to server address");
-        return -1;
-    }
-    return 0;
-}
-
-/// opens a socket connection to hostname:port
-int socket_connect_server(const char* hostname, int port) {
-    stats_udp_socketfd = socket(AF_INET, SOCK_DGRAM, 0);
-    if (stats_udp_socketfd < 0) {
-        exit_with_error("Could not open socket");
-        return -1;
-    }
-    
-    // reuse socket
-    int on = 1;
-    if (setsockopt(stats_udp_socketfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) != 0) {
-        exit_with_error("Could not socket option");
-        return -1;
-    }
-    
-    // use non-blocking sockets
-    int flags = fcntl(stats_udp_socketfd, F_GETFL, 0);
-    fcntl(stats_udp_socketfd, F_SETFL, flags | O_NONBLOCK);
-    
-    // bind socket to a specific port
-    struct sockaddr_in sock_addr;
-    memset ((char*) &sock_addr, 0, sizeof(sock_addr));
-    sock_addr.sin_family = AF_INET;
-    sock_addr.sin_port   = htons(port);
-    sock_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    if (bind(stats_udp_socketfd, (struct sockaddr*) &sock_addr, sizeof(sock_addr)) == -1) {
-        exit_with_error("Could not bind port");
-        return -1;
-    }
-    
-    stats_server = gethostbyname(hostname);
-    if (stats_server == 0) {
-        exit_with_error("Could not get host by name");
-        return -1;
-    }
+    int rc = fcntl(socketfd, F_SETFL, flags | O_NONBLOCK);
+    check(rc == 0, "Can't set non-blocking.");
     
     return 0;
+error:
+    return 1;
 }
 
-/// Closes the existing socket connection
-void socket_close() {
-    if (stats_udp_socketfd != 0) {
-        close(stats_udp_socketfd);
-        stats_udp_socketfd = 0;
+int socket_connect_client(const char* host, int port) {
+    int rc = 0;
+    int socketfd = 0;
+    struct addrinfo hints;
+    struct addrinfo* server_info = 0;
+    
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family   = AF_UNSPEC;
+    hints.ai_socktype = SOCK_STREAM;
+    
+    char port_string[10];
+    sprintf(port_string, "%d", port);
+    
+    rc = getaddrinfo(host, port_string, &hints, &server_info);
+    check(rc == 0, "Failed to get address info.");
+    
+    socketfd = socket(server_info->ai_family, server_info->ai_socktype, server_info->ai_protocol);
+    check(socketfd > 0, "Could not open socket.");
+    
+//    int on = 1;
+//    rc = setsockopt(socketfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
+//    check(rc == 0, "Failed to set socket option.");
+    
+    rc = connect(socketfd, server_info->ai_addr, server_info->ai_addrlen);
+    check(rc != -1, "Failed to connect to server.");
+    
+    char address[INET6_ADDRSTRLEN];
+    inet_ntop(server_info->ai_family,
+              get_socket_address(server_info->ai_addr),
+              address,
+              sizeof(address));
+    
+    freeaddrinfo(server_info);
+    return socketfd;
+error:
+    if (socketfd != 0) {
+        close(socketfd);
     }
+    freeaddrinfo(server_info);
+    return -1;
 }
 
-void cleanup() {
-    // TODO?
+int socket_write_string(const char* text, int socketfd) {
+    int rc = 0;
+    
+    int text_length = strlen(text);
+    rc = send(socketfd, text, text_length, 0);
+    check(rc == text_length, "Failed to write everything.");
+    
+    return rc;
+error:
+    return -1;
 }
 
+void socket_close(int socketfd) {
+    close(socketfd);
+}
 
