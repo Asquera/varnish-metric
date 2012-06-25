@@ -1,8 +1,11 @@
 CMAKE_MINIMUM_REQUIRED (VERSION 2.6)
 project (vmod_hello)
 
+include (CheckIncludeFiles)
+
 if (NOT MSVC)
-	set (CMAKE_C_FLAGS "-std=c99")
+    set (CMAKE_C_FLAGS "-std=c99")
+    # set (CMAKE_REQUIRED_DEFINITIONS ${CMAKE_REQUIRED_DEFINITIONS} -D_GNU_SOURCE)
 endif ()
 
 message (STATUS "libs")
