@@ -7,4 +7,3 @@ import metric;
 
 sub vcl_recv {
 }
-s

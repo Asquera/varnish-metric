@@ -11,9 +11,16 @@ int main(int argc, char* argv[]) {
 
     int socketfd = socket_connect_client(hostname, port);
     if (socketfd < 0) {
+        printf("Could not connect client!");
         return -1;
     }
-    socket_write_string("This is a test string and should appear somewhere!", socketfd);
     
+    int rc = socket_write_string("This is a test string and should appear somewhere!", socketfd);
+    if (rc < 0) {
+        printf("Failed to send string: %d", rc);
+        return -1;
+    }
+
+    printf("Successfully sent a string");
     return 0;
 }
