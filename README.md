@@ -65,8 +65,8 @@ For example to measure the metric of requested images:
         return (ok);
     }
     sub vcl_recv {
-        if (req.url ~ "\\.(png|gif|jpg)$") {
-            metric.inc_counter("images");
+        if (req.url ~ "\.(png|gif|jpg)$") {
+            metric.inc_counter("requested_images");
         }
     }
 
