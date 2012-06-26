@@ -19,6 +19,7 @@
 #include <netdb.h>
 #include <fcntl.h>
 
+static double DEFAULT_RATE = 1.0;
 static int socket_write_string(const char* text, int socketfd);
 
 static void* get_socket_address(struct sockaddr* addr) {
@@ -26,18 +27,6 @@ static void* get_socket_address(struct sockaddr* addr) {
         return &(((struct sockaddr_in*)addr)->sin_addr);
     }
     return &(((struct sockaddr_in6*)addr)->sin6_addr);
-}
-
-int nonblock(int socketfd) {
-    int flags = fcntl(socketfd, F_GETFL, 0);
-    check(flags >= 0, "Invalid flags in nonblock.");
-    
-    int rc = fcntl(socketfd, F_SETFL, flags | O_NONBLOCK);
-    check(rc == 0, "Can't set non-blocking.");
-    
-    return 0;
-error:
-    return 1;
 }
 
 int socket_connect_client(const char* host, int port) {
@@ -81,10 +70,12 @@ error:
 int inc_counter(int socketfd, const char* name) {
     return inc_counter_by_value(socketfd, name, 1);
 }
-
+    
 int inc_counter_by_value(int socketfd, const char* name, int value) {
     char text[256];
+    //sprintf(text, "%s:%d|c|@%f", name, value, DEFAULT_RATE);
     sprintf(text, "%s:%d|c", name, value);
+    printf("%s\n", text);
     return socket_write_string(text, socketfd);
 }
 
@@ -94,6 +85,20 @@ int dec_counter(int socketfd, const char* name) {
 
 int dec_counter_by_value(int socketfd, const char* name, int value) {
     return inc_counter_by_value(socketfd, name, -value);
+}
+
+int gauge(int socketfd, const char* name, int value) {
+    char text[256];
+    sprintf(text, "%s:%d|g", name, value);
+    printf("%s\n", text);
+    return socket_write_string(text, socketfd);
+}
+
+int timer(int socketfd, const char* name, int value) {
+    char text[256];
+    sprintf(text, "%s:%d|ms", name, value);
+    printf("%s\n", text);
+    return socket_write_string(text, socketfd);
 }
 
 static int socket_write_string(const char* text, int socketfd) {

@@ -21,5 +21,10 @@ int dec_counter(int socketfd, const char* name);
 /// Decrements a counter with a given name by value
 int dec_counter_by_value(int socketfd, const char* name, int value);
 
+/// Sets a gauge value for a given variable
+int gauge(int socketfd, const char* name, int value);
+
+/// Sets a timer value for a given variable, time is in milliseconds
+int timer(int socketfd, const char* name, int value);
 
 #endif
