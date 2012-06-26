@@ -18,12 +18,10 @@ static int socket_connect() {
     return socketfd;
 }
 
-int init_function(struct vmod_priv* priv, const struct VCL_conf* conf)
-{
-    // get values from vcl config
-    host = "localhost";
-    port = 8125;
-    return socket_connect();
+void vmod_init_client(struct sess* sp, const char* hostname, int hostport) {
+    host = hostname;
+    port = hostport;
+    socket_connect();
 }
 
 void vmod_inc_counter(struct sess* sp, const char* name) {
@@ -46,3 +44,12 @@ void vmod_dec_counter_by_value(struct sess* sp, const char* name, int value) {
     dec_counter_by_value(socketfd, name, value);
 }
 
+void vmod_gauge(struct sess* sp, const char* name, int value) {
+    socket_connect();
+    gauge(socketfd, name, value);
+}
+
+void vmod_timer(struct sess* sp, const char* name, int value) {
+    socket_connect();
+    timer(socketfd, name, value);
+}
