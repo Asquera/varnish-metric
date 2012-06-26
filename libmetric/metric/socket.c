@@ -19,6 +19,8 @@
 #include <netdb.h>
 #include <fcntl.h>
 
+static int socket_write_string(const char* text, int socketfd);
+
 static void* get_socket_address(struct sockaddr* addr) {
     if (addr->sa_family == AF_INET) {
         return &(((struct sockaddr_in*)addr)->sin_addr);
@@ -46,7 +48,7 @@ int socket_connect_client(const char* host, int port) {
     
     memset(&hints, 0, sizeof(hints));
     hints.ai_family   = AF_UNSPEC;
-    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_socktype = SOCK_DGRAM;
     
     char port_string[10];
     sprintf(port_string, "%d", port);
@@ -76,7 +78,25 @@ error:
     return -1;
 }
 
-int socket_write_string(const char* text, int socketfd) {
+int inc_counter(int socketfd, const char* name) {
+    return inc_counter_by_value(socketfd, name, 1);
+}
+
+int inc_counter_by_value(int socketfd, const char* name, int value) {
+    char text[256];
+    sprintf(text, "%s:%d|c", name, value);
+    return socket_write_string(text, socketfd);
+}
+
+int dec_counter(int socketfd, const char* name) {
+    return dec_counter_by_value(socketfd, name, 1);
+}
+
+int dec_counter_by_value(int socketfd, const char* name, int value) {
+    return inc_counter_by_value(socketfd, name, -value);
+}
+
+static int socket_write_string(const char* text, int socketfd) {
     int rc = 0;
     
     int text_length = strlen(text);
