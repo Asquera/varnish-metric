@@ -1,6 +1,8 @@
 Module metric
-Init init_function
+Function VOID init_client(STRING, INT)
 Function VOID inc_counter(STRING)
 Function VOID inc_counter_by_value(STRING, INT)
 Function VOID dec_counter(STRING)
 Function VOID dec_counter_by_value(STRING, INT)
+Function VOID gauge(STRING, INT)
+Function VOID timer(STRING, INT)

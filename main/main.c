@@ -16,10 +16,8 @@ int main(int argc, char* argv[]) {
 
     inc_counter(socketfd, "test");
     inc_counter_by_value(socketfd, "test", 10);
-    dec_counter(socketfd, "test");
-    dec_counter(socketfd, "test");
-    dec_counter(socketfd, "test");
-    dec_counter_by_value(socketfd, "test", 8);
+    gauge(socketfd, "single_gauge", 22);
+    timer(socketfd, "first_timer", 4000);
 
     socket_close(socketfd);
 
