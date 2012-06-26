@@ -1,4 +1,6 @@
 Module metric
 Init init_function
-Function BOOL match(STRING, STRING)
-
+Function VOID inc_counter(STRING)
+Function VOID inc_counter_by_value(STRING, INT)
+Function VOID dec_counter(STRING)
+Function VOID dec_counter_by_value(STRING, INT)
