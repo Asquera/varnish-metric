@@ -1,4 +1,4 @@
-#include "socket.h"
+#include "statsd_client.h"
 #include "dbg.h"
 
 #ifdef HAVE_SYS_SOCKET_H
@@ -9,14 +9,17 @@
 #include <sys/types.h>
 #endif
 
+#include <netinet/in.h>
 #include <arpa/inet.h>
+
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <netinet/in.h>
 #include <netdb.h>
 #include <fcntl.h>
+
+static int socket_write_string(const char* text, int socketfd);
 
 static void* get_socket_address(struct sockaddr* addr) {
     if (addr->sa_family == AF_INET) {
@@ -45,7 +48,7 @@ int socket_connect_client(const char* host, int port) {
     
     memset(&hints, 0, sizeof(hints));
     hints.ai_family   = AF_UNSPEC;
-    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_socktype = SOCK_DGRAM;
     
     char port_string[10];
     sprintf(port_string, "%d", port);
@@ -55,10 +58,6 @@ int socket_connect_client(const char* host, int port) {
     
     socketfd = socket(server_info->ai_family, server_info->ai_socktype, server_info->ai_protocol);
     check(socketfd > 0, "Could not open socket.");
-    
-//    int on = 1;
-//    rc = setsockopt(socketfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
-//    check(rc == 0, "Failed to set socket option.");
     
     rc = connect(socketfd, server_info->ai_addr, server_info->ai_addrlen);
     check(rc != -1, "Failed to connect to server.");
@@ -79,7 +78,25 @@ error:
     return -1;
 }
 
-int socket_write_string(const char* text, int socketfd) {
+int inc_counter(int socketfd, const char* name) {
+    return inc_counter_by_value(socketfd, name, 1);
+}
+
+int inc_counter_by_value(int socketfd, const char* name, int value) {
+    char text[256];
+    sprintf(text, "%s:%d|c", name, value);
+    return socket_write_string(text, socketfd);
+}
+
+int dec_counter(int socketfd, const char* name) {
+    return dec_counter_by_value(socketfd, name, 1);
+}
+
+int dec_counter_by_value(int socketfd, const char* name, int value) {
+    return inc_counter_by_value(socketfd, name, -value);
+}
+
+static int socket_write_string(const char* text, int socketfd) {
     int rc = 0;
     
     int text_length = strlen(text);
