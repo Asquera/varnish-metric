@@ -6,9 +6,11 @@ vmod_LTLIBRARIES = libvmod_metric.la
 libvmod_metric = -module -export-dynamic -avoid-version
 
 libvmod_metric_la_SOURCES = \
-	vcc_if.c \
-	vcc_if.h \
-	vmod_metric.c
+    ../../libmetric/metric/statsd_client.h \
+    ../../libmetric/metric/statsd_client.c \
+    vcc_if.c \
+    vcc_if.h \
+    vmod_metric.c
 
 vcc_if.c vcc_if.h: $(VARNISHSRC)/lib/libvmod_std/vmod.py $(top_srcdir)/src/vmod_metric.vcc
 	@PYTHON@ $(VARNISHSRC)/lib/libvmod_std/vmod.py $(top_srcdir)/src/vmod_metric.vcc
