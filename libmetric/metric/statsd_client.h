@@ -1,5 +1,5 @@
-#ifndef __SOCKET_H
-#define __SOCKET_H
+#ifndef __statsd_client_h
+#define __statsd_client_h
 
 /// Opens a udp socket connection with given host and port
 /// Returns a socket file descriptor if successful or -1 if the connection

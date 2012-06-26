@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <metric/socket.h>
+#include <metric/statsd_client.h>
 
 int main(int argc, char* argv[]) {
     

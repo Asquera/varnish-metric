@@ -1,4 +1,4 @@
-#include "socket.h"
+#include "statsd_client.h"
 #include "dbg.h"
 
 #ifdef HAVE_SYS_SOCKET_H
