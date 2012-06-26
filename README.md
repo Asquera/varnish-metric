@@ -1,5 +1,5 @@
-vmod-statsd
-===========
+varnish-module
+==============
 
 This vmod is used to retrieve interesting stats / metrics from varnish and send them as statsd compatible output to a host.
 
