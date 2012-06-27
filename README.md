@@ -51,7 +51,7 @@ To clean everything, execute the `clean` shell script in the **vmod** folder. Th
 files and directories.
 
 
-The metric module was tested against varnish 3.0.2.
+The metric module was tested against varnish 3.0.2 on Ubuntu Linux 11.10 (64 bit).
 
 
 ### Usage
