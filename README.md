@@ -1,19 +1,21 @@
 varnish-metric
 ==============
 
-This varnish module (vmod) is used for sending statsd-compatible metrics over a udp connection to specific host. It is for those situations where varnish stats might not suffice or when the behavior under very specific conditions is of interest.
+This [varnish](https://www.varnish-cache.org/) module can be used for
+sending [statsd](https://github.com/etsy/statsd)
+compatible metrics over a udp connection. It is for those situations where varnish stats
+might not suffice or when the behavior under very specific conditions is of interest.
 
 ### Prerequisites
 
 Dependening on the system setup it might be necessary to install the following packages
 
-* libtool
-* libpcre
+* [libtool](http://www.gnu.org/software/libtool/libtool.html)
+* [libpcre](http://pcre.org/)
 
 For example in Ubuntu:
 
-    sudo apt-get install libpcre3-dev
-    sudo apt-get install libtool autopoint
+    sudo apt-get install libpcre3-dev libtool
 
 
 ### Installation
@@ -22,8 +24,8 @@ Download the [varnish source](https://www.varnish-cache.org/releases).
 Unpack it to a folder and follow the instructions in the `INSTALL` file.
 This should build varnish from source and install it on the system.
 In order to compile a varnish module successfully, path variables to the varnish source
-and the vmods folder are necessary and must be made available.
-Either by specifying environment variables.
+and the vmods folder are necessary.
+Either provide them by specifying environment variables.
 
     export VARNISHSRC=path/to/varnish_src
     export VMODDIR=/usr/local/lib/varnish/vmods/ // path might differ
@@ -41,19 +43,24 @@ The following steps install the metric vmod.
     make
     make install
 
-Running the `autogen` script can result in an error message, stating the "required file `ltmain.sh` not found".
-It is [suggested to re-run](http://developer.wz2100.net/ticket/349) the script a second time.
+Running the `autogen` script can result in an error message, stating the "*required file `ltmain.sh` not found*".
+It is [suggested to re-run](https://www.varnish-cache.org/trac/wiki/Installation) the script a second time.
 
 
 To clean everything, execute the `clean` shell script in the **vmod** folder. This removes all generated
 files and directories.
 
 
+The metric module was tested against varnish 3.0.2.
+
+
 
 ### Usage
 
+To see which functions are available check the [[documentation]].
+
 After the metric module is installed in the vmods folder the metric module can be used in the VCL script.
-For example to measure the metric of requested images:
+For example to count the number of requested images:
 
     import metric;
     backend default {
@@ -61,6 +68,7 @@ For example to measure the metric of requested images:
         .port = "8080";
     }
     sub vcl_init {
+        /* sets up udp connection */
         metric.init_client("localhost", 8125);
         return (ok);
     }
@@ -70,5 +78,10 @@ For example to measure the metric of requested images:
         }
     }
 
-**Note** the socket connection is established in the function `vcl_init`. This method is called once
-when the varnish module is started.
+**Note** It is advised to set up the socket connection in the function `vcl_init`. This method is called once at start up of the varnish module.
+
+The module provides a few function for counters, gauges and timers, where timers are most likely used in inline C blocks. The following list shows which functions can be called.
+
+    inc_counter("name")
+    inc_counter_by_value("name", amount)
+
