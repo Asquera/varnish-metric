@@ -78,9 +78,3 @@ For example to count the number of requested images:
     }
 
 **Note** It is advised to set up the socket connection in the function `vcl_init`. This method is called once at start up of the varnish module.
-
-The module provides a few function for counters, gauges and timers, where timers are most likely used in inline C blocks. The following list shows which functions can be called.
-
-    inc_counter("name")
-    inc_counter_by_value("name", amount)
-
