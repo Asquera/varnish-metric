@@ -28,7 +28,7 @@ and the vmods folder are necessary.
 Either provide them by specifying environment variables.
 
     export VARNISHSRC=path/to/varnish_src
-    export VMODDIR=/usr/local/lib/varnish/vmods/ // path might differ
+    export VMODDIR=/usr/local/lib/varnish/vmods/ # path might differ
 
 or by providing these variables when calling the `configure` script.
 
@@ -54,10 +54,9 @@ files and directories.
 The metric module was tested against varnish 3.0.2.
 
 
-
 ### Usage
 
-To see which functions are available check the [[documentation]].
+To see which functions are available check the [documentation](Documentation).
 
 After the metric module is installed in the vmods folder the metric module can be used in the VCL script.
 For example to count the number of requested images:
