@@ -2,22 +2,25 @@
 <!DOCTYPE tsung SYSTEM "/usr/share/tsung/tsung-1.0.dtd">
 <tsung loglevel="notice">
     <clients>
-        <client host="localhost" maxusers="2000" use_controller_vm="true" />
+        <client host="localhost" maxusers="10000" use_controller_vm="true" />
     </clients>
 
     <servers>
         <server host="localhost" port="80" type="tcp"/>
     </servers>
 
-<!--
+    <!-- activate monitoring
     <monitoring>
-        <monitor host="localhost" type="erlang"/>
+        <monitor host="localhost" type="snmp"/>
     </monitoring>
--->
+    -->
 
-    <load duration="60" unit="second">
-        <arrivalphase phase="1" duration="60" unit="second">
-            <users maxnumber="2000" interarrival="0.04" unit="second"/>
+    <load duration="4" unit="minute">
+        <arrivalphase phase="1" duration="2" unit="minute">
+            <users maxnumber="1000" interarrival="0.01" unit="second" />
+        </arrivalphase>
+        <arrivalphase phase="2" duration="2" unit="minute">
+            <users maxnumber="1000" interarrival="0.01" unit="second" />
         </arrivalphase>
     </load>
 
@@ -29,12 +32,17 @@
     </options>
 
     <sessions>
-        <session name="http-example" probability="100" type="ts_http">
+        <session name="http-posts" probability="50" type="ts_http">
             <request><http url="http://localhost:80" version="1.1" method="GET"/></request>
             <thinktime random="true" value="1"/>
             <request><http url="http://localhost:80/index.html" version="1.1" method="GET"/></request>
+            <thinktime random="true" value="2"/>
+            <request><http url="http://localhost:80" version="1.1" method="GET"/></request>
             <thinktime random="true" value="1"/>
-            <request><http url="http://localhost:80/2012/06/23/first-post.html" version="1.1" method="GET"/></request>
+            <request><http url="http://localhost:80" version="1.1" method="GET"/></request>
+        </session>
+        <session name="http-request-images" probability="50" type="ts_http">
+            <request><http url="http://localhost:80/2012/06/test.gif" version="1.1" method="GET"/></request>
             <thinktime random="true" value="1"/>
             <request><http url="http://localhost:80/test.png" version="1.1" method="GET"/></request>
             <thinktime random="true" value="1"/>

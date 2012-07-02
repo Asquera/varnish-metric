@@ -45,8 +45,13 @@ int socket_connect_client(const char* host, int port) {
     rc = getaddrinfo(host, port_string, &hints, &server_info);
     check(rc == 0, "Failed to get address info.");
     
-    socketfd = socket(server_info->ai_family, server_info->ai_socktype, server_info->ai_protocol);
+    socketfd = socket(server_info->ai_family, server_info->ai_socktype, IPPROTO_UDP);
     check(socketfd > 0, "Could not open socket.");
+    
+    // set socket option
+    //int sndBuf = 1024;
+    //rc = setsockopt(socketfd, SOL_SOCKET, SO_SNDBUF, (char*)&sndBuf, sizeof(sndBuf));
+    //check(rc != -1, "Failed to set socket option SNDBUF.");
     
     rc = connect(socketfd, server_info->ai_addr, server_info->ai_addrlen);
     check(rc != -1, "Failed to connect to server.");
