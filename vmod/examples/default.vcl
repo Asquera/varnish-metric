@@ -1,9 +1,8 @@
+import metric;
 backend default {
     .host = "127.0.0.1";
-    .port = "3000";
+    .port = "8080";
 }
-
-import metric;
 
 sub vcl_init {
     metric.init_client("localhost", 8125);
@@ -11,6 +10,8 @@ sub vcl_init {
 }
 
 sub vcl_recv {
-    metric.inc_counter("test");
-    metric.inc_counter_by_value("test", 10);
+    /* log the number of requested images */
+    if (req.url ~ "\.(png|gif|jpg)$") {
+        metric.inc_counter("requested_images");
+    }
 }
